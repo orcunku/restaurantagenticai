@@ -1,0 +1,17 @@
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_DB: frontdesk
+      POSTGRES_USER: frontdesk
+      POSTGRES_PASSWORD: frontdesk
+    ports: ["5432:5432"]
+    volumes: ["pgdata:/var/lib/postgresql/data"]
+  app:
+    build: .
+    env_file: .env
+    ports: ["8000:8000"]
+    depends_on: [db]
+    volumes: [".:/app"]
+volumes:
+  pgdata:

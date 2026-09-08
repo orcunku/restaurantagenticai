@@ -1,0 +1,27 @@
+{
+  "name": "Restaurant Agentic AI Demo",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "workspace",
+  "workspaceFolder": "/workspaces/restaurantagenticai",
+  "shutdownAction": "stopCompose",
+  "forwardPorts": [8000],
+  "portsAttributes": {
+    "8000": {
+      "label": "Restaurant AI Demo",
+      "onAutoForward": "openBrowser"
+    }
+  },
+  "postCreateCommand": "bash scripts/codespace-setup.sh",
+  "remoteUser": "vscode",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/local/bin/python"
+      }
+    }
+  }
+}

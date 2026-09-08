@@ -1,0 +1,39 @@
+services:
+  workspace:
+    image: mcr.microsoft.com/devcontainers/python:1-3.12-bookworm
+    volumes:
+      - ..:/workspaces/restaurantagenticai:cached
+    command: sleep infinity
+    environment:
+      APP_ENV: development
+      PUBLIC_BASE_URL: http://localhost:8000
+      DATABASE_URL: postgresql+asyncpg://frontdesk:frontdesk@db:5432/frontdesk
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-5-mini}
+      OPENAI_EMBEDDING_MODEL: ${OPENAI_EMBEDDING_MODEL:-text-embedding-3-small}
+      TWILIO_ACCOUNT_SID: ${TWILIO_ACCOUNT_SID:-}
+      TWILIO_AUTH_TOKEN: ${TWILIO_AUTH_TOKEN:-}
+      TWILIO_WHATSAPP_FROM: ${TWILIO_WHATSAPP_FROM:-whatsapp:+14155238886}
+      ADMIN_API_KEY: ${ADMIN_API_KEY:-change-me}
+      DEMO_RESTAURANT_SLUG: ${DEMO_RESTAURANT_SLUG:-demo-bistro}
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: pgvector/pgvector:pg16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: frontdesk
+      POSTGRES_USER: frontdesk
+      POSTGRES_PASSWORD: frontdesk
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U frontdesk -d frontdesk"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    volumes:
+      - codespace_pgdata:/var/lib/postgresql/data
+
+volumes:
+  codespace_pgdata:
