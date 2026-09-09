@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
-from app.demo_data import dashboard_payload, demo_reply, RESTAURANTS
+
+from app.demo_data import RESTAURANTS, dashboard_payload, demo_reply
 
 router = APIRouter(prefix="/demo", tags=["synthetic-demo"])
 

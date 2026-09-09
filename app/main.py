@@ -1,12 +1,14 @@
 from contextlib import asynccontextmanager
+
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from app.db.init_db import init_db
+
+from app.api.demo_routes import router as demo_router
 from app.api.routes import router as api_router
 from app.api.twilio_routes import router as twilio_router
-from app.api.demo_routes import router as demo_router
-from app.core.config import get_settings
+from app.db.init_db import init_db
+
 
 @asynccontextmanager
 async def lifespan(app):
@@ -20,5 +22,5 @@ app.mount("/static",StaticFiles(directory="app/static"),name="static")
 templates=Jinja2Templates(directory="app/templates")
 
 @app.get("/")
-async def home(request:Request):
-    return templates.TemplateResponse("index.html",{"request":request,"slug":"vienna-table"})
+async def home(request: Request):
+    return templates.TemplateResponse(request, "index.html", {"slug": "vienna-table"})

@@ -1,5 +1,6 @@
 import httpx
 
+
 class POSAdapter:
     async def menu(self, restaurant):
         cfg=restaurant.pos_config or {}

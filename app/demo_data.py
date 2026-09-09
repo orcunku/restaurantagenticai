@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime, timedelta
+from datetime import UTC, datetime
 
 RESTAURANTS = {
     "vienna-table": {
@@ -134,7 +134,7 @@ def dashboard_payload(slug: str):
         "reservations": RESERVATIONS,
         "scenarios": DEMO_SCENARIOS,
         "synthetic": True,
-        "generated_at": datetime.now().isoformat(timespec="seconds"),
+        "generated_at": datetime.now(UTC).isoformat(timespec="seconds"),
     }
 
 

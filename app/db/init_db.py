@@ -1,7 +1,8 @@
-from sqlalchemy import text, select
-from app.db.session import engine, SessionLocal
-from app.db.models import Base, Restaurant, KnowledgeChunk
+from sqlalchemy import select, text
+
 from app.core.config import get_settings
+from app.db.models import Base, KnowledgeChunk, Restaurant
+from app.db.session import SessionLocal, engine
 from app.services.rag import embed_text
 
 DEMO_KNOWLEDGE = [

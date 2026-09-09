@@ -1,12 +1,14 @@
 import json
-from datetime import datetime
+from datetime import UTC, datetime
+
 from dateutil import parser as dtparser
 from openai import AsyncOpenAI
 from sqlalchemy import select
+
 from app.core.config import get_settings
-from app.db.models import Restaurant, Conversation, Message, Reservation
-from app.services.rag import search_knowledge
+from app.db.models import Conversation, Message, Reservation, Restaurant
 from app.integrations.reservations import get_reservation_adapter
+from app.services.rag import search_knowledge
 
 settings=get_settings()
 client=AsyncOpenAI(api_key=settings.openai_api_key) if settings.openai_api_key else None
@@ -51,7 +53,7 @@ async def run_agent(db, restaurant: Restaurant, conversation: Conversation, user
         facts=await search_knowledge(db,restaurant.id,user_text,3)
         answer="Demo mode (no OPENAI_API_KEY). Relevant restaurant facts:\n"+"\n".join("- "+x["content"] for x in facts)
     else:
-        instructions=f"""You are the digital front desk for {restaurant.name}, timezone {restaurant.timezone}. Be warm, concise, multilingual and operational. At the start of a new voice interaction disclose that you are an AI/digital assistant; never pretend to be human. Never invent restaurant facts: use search_restaurant_knowledge. Never give absolute medical/allergy safety guarantees; escalate severe allergy requests. Always check availability before creating reservations. For consequential actions, reflect the exact date, time, party size and guest name in the confirmation. Use the guest's language. Current date/time context: {datetime.now().isoformat()}."""
+        instructions=f"""You are the digital front desk for {restaurant.name}, timezone {restaurant.timezone}. Be warm, concise, multilingual and operational. At the start of a new voice interaction disclose that you are an AI/digital assistant; never pretend to be human. Never invent restaurant facts: use search_restaurant_knowledge. Never give absolute medical/allergy safety guarantees; escalate severe allergy requests. Always check availability before creating reservations. For consequential actions, reflect the exact date, time, party size and guest name in the confirmation. Use the guest's language. Current date/time context: {datetime.now(UTC).isoformat()}."""
         input_items=[{"role":"user","content":history}]
         r=await client.responses.create(model=settings.openai_model,instructions=instructions,input=input_items,tools=TOOLS,tool_choice="auto")
         for _ in range(5):

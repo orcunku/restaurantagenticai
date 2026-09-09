@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
-from datetime import datetime, timedelta
+from datetime import UTC, datetime
+
 import httpx
+
 
 class ReservationAdapter(ABC):
     @abstractmethod
@@ -16,7 +18,7 @@ class MockReservationAdapter(ReservationAdapter):
             return {"available": False, "reason": "groups_over_8_require_handoff", "alternatives": []}
         return {"available": True, "start_at": start_at.isoformat(), "seating": seating or "any"}
     async def create(self, restaurant, payload):
-        return {"ok": True, "provider_id": f"mock-{int(datetime.utcnow().timestamp())}", **payload}
+        return {"ok": True, "provider_id": f"mock-{int(datetime.now(UTC).timestamp())}", **payload}
     async def cancel(self, restaurant, provider_id):
         return {"ok": True, "provider_id": provider_id, "status": "cancelled"}
 

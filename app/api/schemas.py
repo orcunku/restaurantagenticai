@@ -1,5 +1,7 @@
-from pydantic import BaseModel, Field
 from typing import Any
+
+from pydantic import BaseModel, Field
+
 
 class RestaurantCreate(BaseModel):
     slug:str; name:str; timezone:str="Europe/Vienna"; default_language:str="de-AT"

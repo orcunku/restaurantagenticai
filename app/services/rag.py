@@ -1,5 +1,6 @@
 from openai import AsyncOpenAI
 from sqlalchemy import select
+
 from app.core.config import get_settings
 from app.db.models import KnowledgeChunk
 
