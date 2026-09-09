@@ -1,3 +1,5 @@
 streamlit
 pandas
 httpx
+streamlit>=1.40
+pandas>=2.0
