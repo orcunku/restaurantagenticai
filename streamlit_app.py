@@ -1,4 +1,3 @@
-
 import streamlit as st
 import streamlit.components.v1 as components
 
@@ -9,38 +8,14 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
-# ---------------------------------------------------------
-# REMOVE STREAMLIT UI / PADDING
-# ---------------------------------------------------------
-
 st.markdown(
     """
     <style>
-        #MainMenu {
-            visibility: hidden;
-        }
-
-        footer {
-            visibility: hidden;
-        }
-
-        header {
-            visibility: hidden;
-        }
+        #MainMenu {visibility: hidden;}
+        footer {visibility: hidden;}
+        header {visibility: hidden;}
 
         [data-testid="stHeader"] {
-            display: none;
-        }
-
-        [data-testid="stToolbar"] {
-            display: none;
-        }
-
-        [data-testid="stDecoration"] {
-            display: none;
-        }
-
-        [data-testid="stStatusWidget"] {
             display: none;
         }
 
@@ -55,11 +30,6 @@ st.markdown(
             margin: 0 !important;
         }
 
-        [data-testid="stMain"] {
-            padding: 0 !important;
-            margin: 0 !important;
-        }
-
         iframe {
             border: none !important;
         }
@@ -68,15 +38,11 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# ---------------------------------------------------------
-# EXACT HOSTAI APPLICATION
-# ---------------------------------------------------------
-
-HOSTAI_URL = "https://YOUR-PUBLIC-HOSTAI-URL.com"
+HOSTAI_URL = "https://zany-engine-wrpvvjwq75wq2gv9-8001.app.github.dev/"
 
 components.iframe(
     HOSTAI_URL,
-    height=1400,
+    height=1600,
     scrolling=True,
 )
 
