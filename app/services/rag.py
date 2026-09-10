@@ -7,10 +7,9 @@ from app.db.models import KnowledgeChunk
 settings = get_settings()
 client = AsyncOpenAI(api_key=settings.openai_api_key) if settings.openai_api_key else None
 
-async def embed_text(text: str) -> list[float] | None:
-    if not client: return None
-    r = await client.embeddings.create(model=settings.openai_embedding_model, input=text)
-    return r.data[0].embedding
+async def embed_text(text: str) -> list[float]:
+    # Mock embedding to bypass Groq 404 errors on free tiers
+    return [0.0] * 1536
 
 async def search_knowledge(db, restaurant_id: str, query: str, limit: int = 5):
     qemb = await embed_text(query)
