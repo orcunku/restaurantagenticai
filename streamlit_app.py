@@ -1,59 +1,45 @@
-import streamlit as st
-import httpx
 import os
+import streamlit as st
+import streamlit.components.v1 as components
+from build_template import compile_standalone_html
 
-st.set_page_config(page_title="European AI Front Desk", page_icon="🍽️", layout="wide")
+# 1. Force Streamlit to use maximum screen space
+st.set_page_config(
+    page_title="European AI Front Desk",
+    page_icon="🍽️",
+    layout="wide",
+    initial_sidebar_state="collapsed"
+)
 
-# Header section
-st.title("🍽️ European AI Front Desk for Restaurants")
-st.caption("Ihr digitaler Gastgeber — 24/7 AI Receptionist Demo")
+# 2. CSS overrides to remove default Streamlit gaps and margins
+st.markdown("""
+    <style>
+        #MainMenu {visibility: hidden;}
+        header {visibility: hidden;}
+        footer {visibility: hidden;}
+        .block-container {
+            padding: 0rem !important;
+            margin: 0rem !important;
+            max-width: 100% !important;
+        }
+        iframe {
+            width: 100vw !important;
+            height: 100vh !important;
+            border: none !important;
+        }
+    </style>
+""", unsafe_allow_html=True)
 
-# Sidebar settings
-st.sidebar.header("Configuration")
-restaurant_slug = st.sidebar.selectbox("Select Demo Restaurant", ["demo-bistro", "vienna-fine-dining", "tyrol-alpine-inn"])
-api_base_url = st.sidebar.text_input("Backend API Base URL", os.getenv("PUBLIC_BASE_URL", "http://localhost:8000"))
+# 3. Load or build the inlined HTML template
+@st.cache_data
+def get_compiled_html():
+    try:
+        return compile_standalone_html()
+    except Exception as e:
+        st.error(f"Error compiling template: {e}")
+        return "<h1>Error loading template files.</h1>"
 
-st.sidebar.markdown("---")
-st.sidebar.subheader("Dashboard Overview")
-st.sidebar.metric(label="Est. Monthly ROI", value="€1,250")
-st.sidebar.metric(label="Calls Handled (30d)", value="342")
-st.sidebar.metric(label="Reservations Created", value="118")
+html_content = get_compiled_html()
 
-# Chat Interface
-st.subheader("💬 Live Interactive Assistant")
-
-if "messages" not in st.session_state:
-    st.session_state.messages = []
-
-# Display chat history
-for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
-        st.write(message["content"])
-
-# User prompt handling
-if prompt := st.chat_input("Ask about reservations, allergens, or opening hours..."):
-    st.session_state.messages.append({"role": "user", "content": prompt})
-    with st.chat_message("user"):
-        st.write(prompt)
-
-    with st.chat_message("assistant"):
-        message_placeholder = st.empty()
-        message_placeholder.markdown("Thinking...")
-        
-        try:
-            # Call backend API endpoint (fallback to synthetic mode if backend is unavailable)
-            response = httpx.post(
-                f"{api_base_url}/demo/chat/{restaurant_slug}",
-                json={"message": prompt},
-                timeout=5.0
-            )
-            if response.status_code == 200:
-                bot_response = response.json().get("response", "Thank you for reaching out!")
-            else:
-                bot_response = f"[Demo Mode] Guten Tag! Thank you for contacting {restaurant_slug}. We have recorded your request for '{prompt}'."
-        except Exception:
-            # Graceful fallback so Streamlit Cloud never crashes
-            bot_response = f"[Demo Mode] Guten Tag! I am the digital receptionist for {restaurant_slug}. How can I assist you with your table booking today?"
-
-        message_placeholder.markdown(bot_response)
-        st.session_state.messages.append({"role": "assistant", "content": bot_response})
+# 4. Render identical HTML UI via component iframe
+components.html(html_content, height=1000, scrolling=True)
